@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Happy Birthday Disha 🎉</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #fff8f0;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    h1, h2 {
+      margin: 20px;
+      color: #ff4d6d;
+      animation: popin 1s ease;
+    }
+
+    #canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    #message {
+      font-size: 2em;
+      margin-top: 100px;
+    }
+
+    @keyframes popin {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .quiz {
+      display: none;
+      margin-top: 30px;
+      font-size: 1.2em;
+    }
+
+    .quiz button {
+      margin: 10px;
+      padding: 10px 20px;
+      border: none;
+      background-color: #ffd166;
+      color: #333;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 10px;
+    }
+
+    .quiz button:hover {
+      background-color: #fcbf49;
+    }
+
+    .result {
+      font-size: 1.3em;
+      color: #06d6a0;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <div id="message">
+    <h1>🎉 Happy Birthday Disha! 🎂</h1>
+    <h2>Wishing you a day full of smiles, surprises, and cake! 🍰</h2>
+  </div>
+
+  <div class="quiz" id="quiz">
+    <h2>🎈 Quick Birthday Quiz 🎈</h2>
+    <div id="q"></div>
+    <div id="options"></div>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    // 🎉 Confetti Animation
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const confetti = [];
+
+    for (let i = 0; i < 300; i++) {
+      confetti.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 6 + 4,
+        d: Math.random() * 10 + 5,
+        color: `hsl(${Math.random() * 360}, 100%, 70%)`,
+        tilt: Math.random() * 10 - 10,
+        tiltAngle: 0
+      });
+    }
+
+    function drawConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confetti.forEach(c => {
+        ctx.beginPath();
+        ctx.lineWidth = c.r / 2;
+        ctx.strokeStyle = c.color;
+        ctx.moveTo(c.x + c.tilt + c.r / 2, c.y);
+        ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r / 2);
+        ctx.stroke();
+      });
+      update();
+    }
+
+    function update() {
+      confetti.forEach(c => {
+        c.y += Math.cos(c.d) + 1 + c.r / 2;
+        c.x += Math.sin(c.d);
+        c.tiltAngle += 0.1;
+        c.tilt = Math.sin(c.tiltAngle) * 15;
+
+        if (c.y > canvas.height) {
+          c.y = -10;
+          c.x = Math.random() * canvas.width;
+        }
+      });
+    }
+
+    setInterval(drawConfetti, 20);
+
+    // 🎂 Show Quiz after 30s
+    setTimeout(() => {
+      document.getElementById('message').style.display = 'none';
+      document.getElementById('quiz').style.display = 'block';
+      startQuiz();
+    }, 30000); // 30 seconds
+
+    // 🧠 Simple Quiz
+    const questions = [
+      {
+        q: "What color is Disha's birthday cake?",
+        options: ["Pink", "Blue", "Chocolate", "Rainbow"],
+        answer: 2
+      },
+      {
+        q: "Which song best fits a birthday party?",
+        options: ["Happy Birthday", "Let It Go", "Despacito", "Bohemian Rhapsody"],
+        answer: 0
+      },
+      {
+        q: "Pick a gift Disha would love:",
+        options: ["Books", "Chocolate", "Vacation", "All of the above"],
+        answer: 3
+      }
+    ];
+
+    let current = 0;
+
+    function startQuiz() {
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = questions[current];
+      document.getElementById('q').textContent = q.q;
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = "";
+
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(i);
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(i) {
+      const q = questions[current];
+      const result = document.getElementById('result');
+      if (i === q.answer) {
+        result.textContent = "✅ Correct!";
+      } else {
+        result.textContent = "❌ Oops! Try the next one.";
+      }
+
+      current++;
+      if (current < questions.length) {
+        setTimeout(() => {
+          result.textContent = "";
+          showQuestion();
+        }, 1500);
+      } else {
+        setTimeout(() => {
+          document.getElementById('quiz').innerHTML = `<h2>🎉 Great Job, Disha! 🎉</h2><p>You completed the quiz! Have a fantastic birthday! 🥳</p>`;
+        }, 2000);
+      }
+    }
+  </script>
+</body>
+</html>
